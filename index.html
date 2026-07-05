@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="근로기준법에 부합하는 가장 정확하고 직관적인 퇴직금 및 퇴직소득세 계산기입니다. 평균임금과 통상임금을 비교하여 법적 기준에 맞는 퇴직금을 실시간 계산해 줍니다.">
+    <meta name="keywords" content="퇴직금 계산기, 퇴직소득세 계산기, 평균임금, 통상임금, 근속연수공제, 퇴직금 세금, 2026 퇴직금">
+    <meta name="author" content="gloriajung1106-art">
+    <meta property="og:title" content="스마트 퇴직금 & 퇴직소득세 계산기">
+    <meta property="og:description" content="근로기준법 기준 최신 퇴직금 계산 및 2025/2026 귀속 퇴직소득세 모의 계산 서비스">
+    <meta property="og:type" content="website">
+    <title>스마트 퇴직금 & 퇴직소득세 계산기</title>
+    <!-- Font Preload -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for beautiful visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-light">
+    <!-- Background Elements -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <div class="brand-text">
+                    <h1>스마트 퇴직금 계산기</h1>
+                    <span>Smart Severance Pay Calculator</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="themeToggleBtn" class="icon-btn" aria-label="다크 모드 토글">
+                    <!-- Sun Icon -->
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="app-nav">
+            <button id="tabBtnCalc" class="nav-tab active" data-tab="calculator">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="15" y2="17"></line></svg>
+                퇴직금 계산기
+            </button>
+            <button id="tabBtnTax" class="nav-tab" data-tab="tax-calculator">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                퇴직소득세 계산기
+            </button>
+            <button id="tabBtnGuide" class="nav-tab" data-tab="guide">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                지급 규정 가이드
+            </button>
+        </nav>
+
+        <main class="app-content">
+            <!-- TAB 1: SEVERANCE CALCULATOR -->
+            <section id="tabContentCalc" class="tab-pane active">
+                <div class="layout-grid">
+                    <!-- Left: Inputs -->
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h2>1. 기본 정보 입력</h2>
+                            <p class="subtitle">입사일과 퇴직일을 입력하면 대상 기간이 자동 계산됩니다.</p>
+                        </div>
+                        <form id="severanceForm" class="form-container" onsubmit="return false;">
+                            <!-- Dates Grid -->
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="joinDate">입사일</label>
+                                    <input type="date" id="joinDate" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="retireDate">퇴직일 (마지막 근무일의 다음 날)</label>
+                                    <input type="date" id="retireDate" required>
+                                </div>
+                            </div>
+
+                            <!-- Working Days Info Alert -->
+                            <div id="workingDaysAlert" class="alert-info hidden">
+                                <span class="alert-text">총 재직일수: <strong id="totalWorkingDaysText">0</strong>일</span>
+                                <span id="underOneYearWarning" class="badge badge-warning hidden">1년 미만 (퇴직금 의무 없음)</span>
+                            </div>
+
+                            <!-- Wages Subperiods Container -->
+                            <div class="wage-subperiods-section">
+                                <div class="section-title-row">
+                                    <h3>2. 퇴직 전 3개월 임금 내역</h3>
+                                    <span class="info-badge">해당 월의 실제 일수를 기반으로 입력합니다.</span>
+                                </div>
+                                
+                                <div class="table-container">
+                                    <table class="wage-table">
+                                        <thead>
+                                            <tr>
+                                                <th>기간</th>
+                                                <th>일수</th>
+                                                <th>기본급 (원)</th>
+                                                <th>기타수당 (원)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="wagePeriodsBody">
+                                            <!-- Dynamically generated in JS -->
+                                            <tr class="placeholder-row">
+                                                <td colspan="4">입사일과 퇴직일을 입력해주세요.</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="total-row">
+                                                <td>합계</td>
+                                                <td id="total3MonthDays">0일</td>
+                                                <td><span id="total3MonthBasic">0</span>원</td>
+                                                <td><span id="total3MonthAllow">0</span>원</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Annual Bonus & Leave Allowance -->
+                            <div class="annual-allowances-section">
+                                <h3>3. 상여금 및 연차수당 (최근 1년 기준)</h3>
+                                <div class="input-row">
+                                    <div class="input-group">
+                                        <label for="annualBonus">
+                                            연간 상여금 총액 (원)
+                                            <span class="tooltip-icon" title="퇴직 전 12개월 동안 지급받은 상여금 총액. 이 중 3/12이 퇴직금 평균임금 계산에 반영됩니다.">?</span>
+                                        </label>
+                                        <input type="text" id="annualBonus" placeholder="0" class="numeric-input">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="annualLeaveAllowance">
+                                            연차수당 총액 (원)
+                                            <span class="tooltip-icon" title="퇴직 전 이미 발생하여 지급받은 연차휴가 미사용 수당. 이 중 3/12이 반영됩니다. (퇴직으로 인해 발생하는 연차수당은 제외)">?</span>
+                                        </label>
+                                        <input type="text" id="annualLeaveAllowance" placeholder="0" class="numeric-input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ordinary Wage Check -->
+                            <div class="ordinary-wage-section">
+                                <h3>4. 통상임금 보장 (선택)</h3>
+                                <div class="input-group">
+                                    <label for="monthlyOrdinaryWage">
+                                        월 통상임금 (원)
+                                        <span class="tooltip-icon" title="평균임금이 통상임금보다 적을 경우, 통상임금을 기준으로 퇴직금이 계산됩니다. 입력 시 자동 비교됩니다.">?</span>
+                                    </label>
+                                    <input type="text" id="monthlyOrdinaryWage" placeholder="0" class="numeric-input">
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
+                                <button type="button" id="calculateBtn" class="btn btn-primary">퇴직금 계산하기</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Results & Charts -->
+                    <div id="resultsColumn" class="results-column hidden">
+                        <!-- Result Card -->
+                        <div class="card glass result-card highlight-border">
+                            <div class="card-header">
+                                <div class="badge badge-success">계산 완료</div>
+                                <h2>퇴직금 예상 수령액</h2>
+                            </div>
+                            <div class="result-display">
+                                <span class="currency-symbol">₩</span>
+                                <span id="finalSeverancePay" class="amount">0</span>
+                                <span class="won-label">원</span>
+                            </div>
+                            <div class="result-actions">
+                                <button id="printBtn" class="btn btn-outline btn-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                    상세 내역 인쇄 / PDF 저장
+                                </button>
+                                <button id="sendToTaxBtn" class="btn btn-primary btn-sm">
+                                    세금 계산하러 가기 &rarr;
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Wage Chart Card -->
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3>퇴직금 구성 비율</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="wagesPieChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Calculation Details Breakdown -->
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3>상세 산출 명세서</h3>
+                            </div>
+                            <div class="breakdown-list">
+                                <div class="breakdown-item">
+                                    <span class="label">총 재직일수</span>
+                                    <span class="value"><strong id="bdWorkingDays">0</strong>일</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">3개월 임금 합계</span>
+                                    <span class="value"><span id="bd3MonthWages">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">상여금 가산액 (3/12)</span>
+                                    <span class="value">+ <span id="bdBonusAdded">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">연차수당 가산액 (3/12)</span>
+                                    <span class="value">+ <span id="bdLeaveAdded">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item divider">
+                                    <span class="label">1일 평균임금</span>
+                                    <span class="value highlight"><span id="bdDailyAverageWage">0</span>원</span>
+                                </div>
+                                <div id="ordinaryWageComparisonRow" class="breakdown-item hidden">
+                                    <span class="label">1일 통상임금 비교</span>
+                                    <span class="value"><span id="bdDailyOrdinaryWage">0</span>원 (적용기준: <span id="appliedWageType">평균임금</span>)</span>
+                                </div>
+                            </div>
+                            <div class="formula-box">
+                                <span class="formula-title">계산식</span>
+                                <code class="formula-code">
+                                    퇴직금 = <span class="f-daily-wage">1일 임금</span> &times; 30 &times; (<span class="f-working-days">재직일수</span> &divide; 365)
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Placeholder Column when not calculated -->
+                    <div id="resultsPlaceholder" class="placeholder-column">
+                        <div class="placeholder-card glass">
+                            <svg class="placeholder-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <h3>계산 결과를 기다리고 있습니다</h3>
+                            <p>기본 정보와 3개월 임금 내역을 입력한 뒤, '퇴직금 계산하기' 버튼을 눌러주세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SEVERANCE TAX CALCULATOR -->
+            <section id="tabContentTax" class="tab-pane">
+                <div class="layout-grid">
+                    <!-- Left: Tax Inputs -->
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h2>퇴직소득세 모의 계산</h2>
+                            <p class="subtitle">2025/2026 귀속 최신 세법 규정을 반영하여 세금을 모의 계산합니다.</p>
+                        </div>
+                        <form id="taxForm" class="form-container" onsubmit="return false;">
+                            <div class="input-group">
+                                <label for="taxSeveranceAmount">퇴직급여액 (원)</label>
+                                <input type="text" id="taxSeveranceAmount" placeholder="0" class="numeric-input" required>
+                            </div>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="taxServiceYears">근속연수 (년)</label>
+                                    <input type="number" id="taxServiceYears" min="1" max="60" placeholder="1" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="irpTransferSelect">연금계좌(IRP) 수령 여부</label>
+                                    <select id="irpTransferSelect">
+                                        <option value="no">일시금으로 즉시 수령 (감면 없음)</option>
+                                        <option value="yes-10">연금으로 10년 이하 수령 (세액 30% 감면)</option>
+                                        <option value="yes-over10">연금으로 10년 초과 수령 (세액 40% 감면)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" id="taxCalculateBtn" class="btn btn-primary">세금 계산하기</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Tax Results -->
+                    <div id="taxResultsColumn" class="results-column hidden">
+                        <div class="card glass highlight-border">
+                            <div class="card-header">
+                                <div class="badge badge-success">과세 명세 완료</div>
+                                <h2>예상 실령액 (세후 수령액)</h2>
+                            </div>
+                            <div class="result-display">
+                                <span class="currency-symbol">₩</span>
+                                <span id="taxNetReceived" class="amount">0</span>
+                                <span class="won-label">원</span>
+                            </div>
+                            <div class="tax-simple-bars">
+                                <div class="bar-item">
+                                    <div class="bar-labels">
+                                        <span>퇴직소득세 (지방소득세 포함)</span>
+                                        <span id="taxTotalTaxText">0원</span>
+                                    </div>
+                                    <div class="bar-track">
+                                        <div id="taxPercentBar" class="bar-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3>소득세 산출 상세</h3>
+                            </div>
+                            <div class="breakdown-list">
+                                <div class="breakdown-item">
+                                    <span class="label">퇴직급여액</span>
+                                    <span class="value"><span id="taxBdSeverance">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">근속연수공제</span>
+                                    <span class="value text-success">- <span id="taxBdServiceDeduct">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">환산급여</span>
+                                    <span class="value"><span id="taxBdConvertedWage">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">환산급여공제</span>
+                                    <span class="value text-success">- <span id="taxBdConvertedDeduct">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">퇴직소득 과세표준</span>
+                                    <span class="value"><span id="taxBdBase">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">기본 산출세액</span>
+                                    <span class="value"><span id="taxBdRawTax">0</span>원</span>
+                                </div>
+                                <div id="irpDeductRow" class="breakdown-item text-success hidden">
+                                    <span class="label">연금수령 감면액 (IRP)</span>
+                                    <span class="value">- <span id="taxBdIrpDeduct">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="label">지방소득세 (소득세의 10%)</span>
+                                    <span class="value">+ <span id="taxBdLocalTax">0</span>원</span>
+                                </div>
+                                <div class="breakdown-item divider">
+                                    <span class="label">최종 공제 세액 합계</span>
+                                    <span class="value text-danger highlight"><span id="taxBdTotalTax">0</span>원 (실효세율: <span id="taxEffectiveRate">0</span>%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Placeholder Column when not calculated -->
+                    <div id="taxResultsPlaceholder" class="placeholder-column">
+                        <div class="placeholder-card glass">
+                            <svg class="placeholder-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <h3>소득세 계산 결과를 기다리고 있습니다</h3>
+                            <p>금액 and 근속연수를 입력하고 '세금 계산하기'를 눌러 실령액을 확인해보세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: FAQ & GUIDE -->
+            <section id="tabContentGuide" class="tab-pane">
+                <div class="guide-container">
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h2>퇴직금 지급기준 및 계산 핵심 정리</h2>
+                            <p class="subtitle">대한민국 근로기준법상 퇴직금 관련 규정 가이드라인입니다.</p>
+                        </div>
+                        <div class="guide-content">
+                            <div class="guide-grid">
+                                <div class="guide-box">
+                                    <h3>💡 퇴직금 지급 대상 조건</h3>
+                                    <ul>
+                                        <li><strong>계속근로기간 1년 이상:</strong> 동일한 사업장에서 계속해서 일한 기간이 1년 이상이어야 합니다.</li>
+                                        <li><strong>주 15시간 이상 근무:</strong> 4주간 평균하여 1주간의 소정근로시간이 15시간 이상이어야 합니다.</li>
+                                        <li>근로 형태(정규직, 계약직, 아르바이트, 프리랜서 등)에 무관하게 조건을 만족하면 법적 지급 의무가 발생합니다.</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-box">
+                                    <h3>💰 평균임금 vs 통상임금 비교 법칙</h3>
+                                    <ul>
+                                        <li><strong>평균임금:</strong> 퇴직 이전 3개월 동안 지급된 임금총액을 그 기간의 총 일수로 나눈 1일 임금입니다.</li>
+                                        <li><strong>통상임금:</strong> 근로자에게 정기적·일률적으로 소정근로에 대해 지급하기로 정해진 금액입니다.</li>
+                                        <li><strong>비교 원칙:</strong> 산출된 평균임금이 근로자의 <strong>통상임금보다 적으면 통상임금을 기준</strong>으로 퇴직금을 지급해야 합니다. (근로기준법 제2조 제2항)</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-box">
+                                    <h3>📊 평균임금 산정 시 가산 항목</h3>
+                                    <ul>
+                                        <li><strong>연간 상여금 총액의 3/12:</strong> 매월 정기적으로 지급받는 급여 외에 지급된 상여금 총액 중 3개월치를 가산합니다.</li>
+                                        <li><strong>연차수당(미사용수당)의 3/12:</strong> 퇴직 전 이미 발생하여 1년 동안 지급받은 연차휴가 미사용수당액 중 3개월치를 가산합니다. (단, 퇴직함으로 인해 비로소 발생하는 연차수당은 산정에서 제외됩니다.)</li>
+                                    </ul>
+                                </div>
+                                <div class="guide-box">
+                                    <h3>🛡️ 평균임금 산정 제외 기간 (역산 제외)</h3>
+                                    <p>아래의 기간이 퇴직 전 3개월 내에 포함된 경우, 해당 기간과 그 기간의 임금은 평균임금 산정 대상 기간에서 제외하고 그 이전의 기간으로 소급하여 계산합니다.</p>
+                                    <ul>
+                                        <li>수습 사용 중인 기간</li>
+                                        <li>사용자의 귀책사유로 휴업한 기간</li>
+                                        <li>출산전후휴가 및 육아휴직 기간</li>
+                                        <li>업무상 부상·질병으로 휴업한 기간</li>
+                                        <li>적법한 쟁의행위(파업 등) 기간</li>
+                                        <li>병역, 예비군, 민방위 훈련 기간</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Calculation History Sidebar -->
+        <aside class="history-sidebar card glass">
+            <div class="sidebar-header">
+                <h3>계산 기록</h3>
+                <button id="clearHistoryBtn" class="text-btn">모두 지우기</button>
+            </div>
+            <div id="historyList" class="history-list">
+                <div class="empty-history">기록이 없습니다.</div>
+            </div>
+        </aside>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 스마트 퇴직금 계산기. 대한민국 근로기준법 및 최신 세법 규정 반영.</p>
+        </footer>
+    </div>
+
+    <!-- Main JavaScript Logic -->
+    <script src="app.js" defer></script>
+</body>
+</html>
