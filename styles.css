@@ -93,11 +93,11 @@ body {
 /* Layout App Container */
 .app-container {
     width: 100%;
-    max-width: 1280px;
-    padding: 40px 24px;
+    max-width: 680px;
+    padding: 24px 16px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 20px;
 }
 
 /* Header Styling */
@@ -213,10 +213,11 @@ body {
 
 /* Layout Grid system */
 .layout-grid {
-    display: grid;
-    grid-template-columns: 1.25fr 1fr;
-    gap: 32px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 580px;
+    margin: 0 auto;
 }
 
 /* Card Styling (Glassmorphism) */
@@ -227,10 +228,10 @@ body {
     box-shadow: var(--card-shadow);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    padding: 32px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
     transition: var(--transition);
 }
 .card:hover {
@@ -265,12 +266,12 @@ body {
 .form-container {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
 }
 .input-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 16px;
 }
 .input-group {
     display: flex;
@@ -596,8 +597,7 @@ input:focus, select:focus {
 
 /* Placeholder columns */
 .placeholder-column {
-    display: flex;
-    height: 100%;
+    display: none !important;
 }
 .placeholder-card {
     border: 1px dashed var(--card-border);
