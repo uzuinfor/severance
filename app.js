@@ -12,13 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const workingDaysAlert = document.getElementById('workingDaysAlert');
     const totalWorkingDaysText = document.getElementById('totalWorkingDaysText');
     const underOneYearWarning = document.getElementById('underOneYearWarning');
-    const wagePeriodsBody = document.getElementById('wagePeriodsBody');
-    const total3MonthDays = document.getElementById('total3MonthDays');
-    const total3MonthBasic = document.getElementById('total3MonthBasic');
-    const total3MonthAllow = document.getElementById('total3MonthAllow');
+    const monthlySalaryInput = document.getElementById('monthlySalary');
     const annualBonusInput = document.getElementById('annualBonus');
     const annualLeaveAllowanceInput = document.getElementById('annualLeaveAllowance');
-    const monthlyOrdinaryWageInput = document.getElementById('monthlyOrdinaryWage');
     const calculateBtn = document.getElementById('calculateBtn');
     const resetBtn = document.getElementById('resetBtn');
 
@@ -35,9 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bdBonusAdded = document.getElementById('bdBonusAdded');
     const bdLeaveAdded = document.getElementById('bdLeaveAdded');
     const bdDailyAverageWage = document.getElementById('bdDailyAverageWage');
-    const ordinaryWageComparisonRow = document.getElementById('ordinaryWageComparisonRow');
-    const bdDailyOrdinaryWage = document.getElementById('bdDailyOrdinaryWage');
-    const appliedWageType = document.getElementById('appliedWageType');
 
     // DOM Elements - Tax Estimator
     const taxSeveranceAmount = document.getElementById('taxSeveranceAmount');
@@ -67,8 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
     // Global variables
-    let subPeriods = [];
-    let wagesChart = null;
     let computedSeverancePay = 0;
     let computedServiceYears = 1;
 
@@ -122,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         while (current <= end) {
             let periodStart = new Date(current);
-            // End of current calendar month or target end date
             let periodEnd = new Date(current.getFullYear(), current.getMonth() + 1, 0);
             if (periodEnd > end) {
                 periodEnd = new Date(end);
@@ -137,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 endStr: formatDate(periodEnd)
             });
             
-            // Move to first day of next month
             current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
         }
         return periods;
@@ -161,68 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Calculate working days
         const workingDays = calculateTotalDays(joinDate, retireDate);
         totalWorkingDaysText.textContent = workingDays;
         workingDaysAlert.classList.remove('hidden');
 
-        // Check if less than 1 year
         if (workingDays < 365) {
             underOneYearWarning.classList.remove('hidden');
         } else {
             underOneYearWarning.classList.add('hidden');
         }
-
-        // Generate 3-month periods
-        subPeriods = getCalculationPeriods(retireDate);
-        renderPeriodsTable(subPeriods);
     }
 
     joinDateInput.addEventListener('change', handleDatesChange);
     retireDateInput.addEventListener('change', handleDatesChange);
-
-    function renderPeriodsTable(periods) {
-        wagePeriodsBody.innerHTML = '';
-        let totalDays = 0;
-
-        periods.forEach((period, idx) => {
-            totalDays += period.days;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${period.startStr} ~ ${period.endStr}</td>
-                <td>${period.days}일</td>
-                <td><input type="text" class="period-basic numeric-input" data-idx="${idx}" placeholder="0" value="0"></td>
-                <td><input type="text" class="period-allow numeric-input" data-idx="${idx}" placeholder="0" value="0"></td>
-            `;
-            wagePeriodsBody.appendChild(tr);
-        });
-
-        total3MonthDays.textContent = `${totalDays}일`;
-        
-        // Setup listeners for newly created inputs
-        wagePeriodsBody.querySelectorAll('.numeric-input').forEach(input => {
-            setupNumericFormatting(input);
-            input.addEventListener('input', calculateTableTotals);
-        });
-
-        calculateTableTotals();
-    }
-
-    function calculateTableTotals() {
-        let sumBasic = 0;
-        let sumAllow = 0;
-
-        wagePeriodsBody.querySelectorAll('.period-basic').forEach(input => {
-            sumBasic += parseFormattedNumber(input.value);
-        });
-
-        wagePeriodsBody.querySelectorAll('.period-allow').forEach(input => {
-            sumAllow += parseFormattedNumber(input.value);
-        });
-
-        total3MonthBasic.textContent = formatNumber(sumBasic);
-        total3MonthAllow.textContent = formatNumber(sumAllow);
-    }
 
     // --- Main calculation Logic ---
     function runSeveranceCalculation() {
@@ -238,63 +178,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const retireDate = new Date(retireDateStr);
         const workingDays = calculateTotalDays(joinDate, retireDate);
 
-        // Gather sub-period values
-        let sumBasic = 0;
-        let sumAllow = 0;
-        let sum3MonthDays = 0;
+        const monthlySalary = parseFormattedNumber(monthlySalaryInput.value);
+        if (monthlySalary <= 0) {
+            alert('월급을 입력해주세요.');
+            return;
+        }
 
-        subPeriods.forEach((period, idx) => {
-            const basicInput = wagePeriodsBody.querySelector(`.period-basic[data-idx="${idx}"]`);
-            const allowInput = wagePeriodsBody.querySelector(`.period-allow[data-idx="${idx}"]`);
-            
-            const bVal = basicInput ? parseFormattedNumber(basicInput.value) : 0;
-            const aVal = allowInput ? parseFormattedNumber(allowInput.value) : 0;
-            
-            sumBasic += bVal;
-            sumAllow += aVal;
-            sum3MonthDays += period.days;
-        });
+        const annualBonus = parseFormattedNumber(annualBonusInput.value);
+        const annualLeaveAllowance = parseFormattedNumber(annualLeaveAllowanceInput.value);
+
+        const periods = getCalculationPeriods(retireDate);
+        let sum3MonthDays = 0;
+        periods.forEach(p => sum3MonthDays += p.days);
 
         if (sum3MonthDays === 0) {
             alert('날짜 기간을 확인해주세요.');
             return;
         }
 
-        const annualBonus = parseFormattedNumber(annualBonusInput.value);
-        const annualLeaveAllowance = parseFormattedNumber(annualLeaveAllowanceInput.value);
-        const monthlyOrdinaryWage = parseFormattedNumber(monthlyOrdinaryWageInput.value);
-
-        // Calculate fractions (3/12 of annual sums)
         const bonusFraction = annualBonus * 3 / 12;
         const leaveFraction = annualLeaveAllowance * 3 / 12;
 
-        const totalWagesSum = sumBasic + sumAllow;
+        const totalWagesSum = monthlySalary * 3;
         const totalAverageBaseSum = totalWagesSum + bonusFraction + leaveFraction;
 
-        // 1-day Average Wage
         const dailyAverageWage = totalAverageBaseSum / sum3MonthDays;
-
-        // Comparison with Daily Ordinary Wage (통상일급)
-        // Formula: Monthly ordinary wage / 209 * 8 (Standard 40-hour work week contract)
-        let dailyOrdinaryWage = 0;
-        let useOrdinaryWage = false;
-        if (monthlyOrdinaryWage > 0) {
-            dailyOrdinaryWage = (monthlyOrdinaryWage / 209) * 8;
-            if (dailyAverageWage < dailyOrdinaryWage) {
-                useOrdinaryWage = true;
-            }
-        }
-
-        const finalDailyWage = useOrdinaryWage ? dailyOrdinaryWage : dailyAverageWage;
-
-        // Severance calculation formula
-        // Severance Pay = (Daily Wage * 30) * (Working Days / 365)
-        const severancePay = finalDailyWage * 30 * (workingDays / 365);
+        const severancePay = dailyAverageWage * 30 * (workingDays / 365);
 
         computedSeverancePay = Math.floor(severancePay);
         computedServiceYears = Math.max(1, Math.ceil(workingDays / 365));
 
-        // Render outcomes
         finalSeverancePay.textContent = formatNumber(computedSeverancePay);
         bdWorkingDays.textContent = workingDays;
         bd3MonthWages.textContent = formatNumber(totalWagesSum);
@@ -302,124 +215,28 @@ document.addEventListener('DOMContentLoaded', () => {
         bdLeaveAdded.textContent = formatNumber(leaveFraction);
         bdDailyAverageWage.textContent = formatNumber(dailyAverageWage);
 
-        // Update ordinary wage display rows
-        if (monthlyOrdinaryWage > 0) {
-            ordinaryWageComparisonRow.classList.remove('hidden');
-            bdDailyOrdinaryWage.textContent = formatNumber(dailyOrdinaryWage);
-            appliedWageType.textContent = useOrdinaryWage ? '통상임금' : '평균임금';
-            
-            // Highlight style adjustment
-            if (useOrdinaryWage) {
-                bdDailyAverageWage.style.textDecoration = 'line-through';
-                bdDailyAverageWage.style.opacity = '0.5';
-                bdDailyOrdinaryWage.parentElement.classList.add('text-success');
-            } else {
-                bdDailyAverageWage.style.textDecoration = 'none';
-                bdDailyAverageWage.style.opacity = '1';
-                bdDailyOrdinaryWage.parentElement.classList.remove('text-success');
-            }
-        } else {
-            ordinaryWageComparisonRow.classList.add('hidden');
-            bdDailyAverageWage.style.textDecoration = 'none';
-            bdDailyAverageWage.style.opacity = '1';
-        }
-
-        // Show outcomes panel
-        resultsPlaceholder.classList.add('hidden');
         resultsColumn.classList.remove('hidden');
 
-        // Draw components chart
-        renderWageBreakdownChart(sumBasic, sumAllow, bonusFraction, leaveFraction);
-
-        // Save history item
-        saveHistoryItem(joinDateStr, retireDateStr, workingDays, computedSeverancePay);
+        saveHistoryItem(joinDateStr, retireDateStr, workingDays, computedSeverancePay, monthlySalary, annualBonus, annualLeaveAllowance);
     }
 
     calculateBtn.addEventListener('click', runSeveranceCalculation);
-
-    // --- Chart Rendering ---
-    function renderWageBreakdownChart(basic, allow, bonus, leave) {
-        const ctx = document.getElementById('wagesPieChart').getContext('2d');
-        
-        // Destruct old chart instance if existing
-        if (wagesChart) {
-            wagesChart.destroy();
-        }
-
-        const isDark = document.body.classList.contains('theme-dark');
-        const textCol = isDark ? '#cbd5e1' : '#475569';
-        
-        wagesChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['기본급', '수당', '상여금 반영액', '연차수당 반영액'],
-                datasets: [{
-                    data: [basic, allow, bonus, leave],
-                    backgroundColor: [
-                        '#6366f1', // Indigo
-                        '#06b6d4', // Cyan
-                        '#f59e0b', // Amber
-                        '#10b981'  // Emerald
-                    ],
-                    borderWidth: isDark ? 2 : 1,
-                    borderColor: isDark ? '#1e293b' : '#ffffff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: textCol,
-                            font: {
-                                family: 'Noto Sans KR',
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return ` ${context.label}: ${formatNumber(context.raw)}원`;
-                            }
-                        }
-                    }
-                },
-                cutout: '65%'
-            }
-        });
-    }
 
     // --- Reset Form Helper ---
     function resetCalculator() {
         joinDateInput.value = '';
         retireDateInput.value = '';
+        monthlySalaryInput.value = '';
         annualBonusInput.value = '';
         annualLeaveAllowanceInput.value = '';
-        monthlyOrdinaryWageInput.value = '';
         
         totalWorkingDaysText.textContent = '0';
         workingDaysAlert.classList.add('hidden');
         underOneYearWarning.classList.add('hidden');
-        
-        wagePeriodsBody.innerHTML = `
-            <tr class="placeholder-row">
-                <td colspan="4">입사일과 퇴직일을 입력해주세요.</td>
-            </tr>
-        `;
-        
-        total3MonthDays.textContent = '0일';
-        total3MonthBasic.textContent = '0';
-        total3MonthAllow.textContent = '0';
 
         resultsColumn.classList.add('hidden');
-        resultsPlaceholder.classList.remove('hidden');
-
-        if (wagesChart) {
-            wagesChart.destroy();
-            wagesChart = null;
+        if (resultsPlaceholder) {
+            resultsPlaceholder.classList.remove('hidden');
         }
     }
 
@@ -585,17 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('theme-dark');
             localStorage.setItem('theme', 'dark');
         }
-        
-        // Re-draw chart on theme toggle to match styles
-        if (wagesChart) {
-            const dataset = wagesChart.data.datasets[0];
-            renderWageBreakdownChart(
-                dataset.data[0],
-                dataset.data[1],
-                dataset.data[2],
-                dataset.data[3]
-            );
-        }
     }
 
     // Load initial theme
@@ -608,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggleBtn.addEventListener('click', toggleTheme);
 
     // --- Calculation History System ---
-    function saveHistoryItem(joinDate, retireDate, days, amount) {
+    function saveHistoryItem(joinDate, retireDate, days, amount, salary, bonus, leave) {
         let history = JSON.parse(localStorage.getItem('severance_history')) || [];
         
         // Keep unique entries
@@ -619,6 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
             retire: retireDate,
             days: days,
             amount: amount,
+            salary: salary,
+            bonus: bonus,
+            leave: leave,
             timestamp: Date.now()
         });
 
@@ -653,8 +462,10 @@ document.addEventListener('DOMContentLoaded', () => {
             div.addEventListener('click', () => {
                 joinDateInput.value = item.join;
                 retireDateInput.value = item.retire;
+                monthlySalaryInput.value = item.salary ? formatNumber(item.salary) : '';
+                annualBonusInput.value = item.bonus ? formatNumber(item.bonus) : '';
+                annualLeaveAllowanceInput.value = item.leave ? formatNumber(item.leave) : '';
                 handleDatesChange();
-                // Find and fill standard salary rows to 0 to prevent issues, user can re-trigger calculation
                 runSeveranceCalculation();
             });
             historyList.appendChild(div);

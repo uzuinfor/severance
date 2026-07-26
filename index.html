@@ -81,8 +81,8 @@
                     <!-- Left: Inputs -->
                     <div class="card glass">
                         <div class="card-header">
-                            <h2>1. 기본 정보 입력</h2>
-                            <p class="subtitle">입사일과 퇴직일을 입력하면 대상 기간이 자동 계산됩니다.</p>
+                            <h2>기본 정보 및 임금 입력</h2>
+                            <p class="subtitle">퇴직금 계산에 필요한 정보를 입력해주세요.</p>
                         </div>
                         <form id="severanceForm" class="form-container" onsubmit="return false;">
                             <!-- Dates Grid -->
@@ -103,44 +103,17 @@
                                 <span id="underOneYearWarning" class="badge badge-warning hidden">1년 미만 (퇴직금 의무 없음)</span>
                             </div>
 
-                            <!-- Wages Subperiods Container -->
-                            <div class="wage-subperiods-section">
-                                <div class="section-title-row">
-                                    <h3>2. 퇴직 전 3개월 임금 내역</h3>
-                                    <span class="info-badge">해당 월의 실제 일수를 기반으로 입력합니다.</span>
-                                </div>
-                                
-                                <div class="table-container">
-                                    <table class="wage-table">
-                                        <thead>
-                                            <tr>
-                                                <th>기간</th>
-                                                <th>일수</th>
-                                                <th>기본급 (원)</th>
-                                                <th>기타수당 (원)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="wagePeriodsBody">
-                                            <!-- Dynamically generated in JS -->
-                                            <tr class="placeholder-row">
-                                                <td colspan="4">입사일과 퇴직일을 입력해주세요.</td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr class="total-row">
-                                                <td>합계</td>
-                                                <td id="total3MonthDays">0일</td>
-                                                <td><span id="total3MonthBasic">0</span>원</td>
-                                                <td><span id="total3MonthAllow">0</span>원</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
+                            <!-- Monthly Salary Input -->
+                            <div class="input-group">
+                                <label for="monthlySalary">
+                                    월급 (원)
+                                    <span class="tooltip-icon" title="퇴직 전 지급받은 기본급 및 기타수당을 포함한 고정 월급입니다.">?</span>
+                                </label>
+                                <input type="text" id="monthlySalary" placeholder="0" class="numeric-input" required>
                             </div>
 
                             <!-- Annual Bonus & Leave Allowance -->
                             <div class="annual-allowances-section">
-                                <h3>3. 상여금 및 연차수당 (최근 1년 기준)</h3>
                                 <div class="input-row">
                                     <div class="input-group">
                                         <label for="annualBonus">
@@ -159,18 +132,6 @@
                                 </div>
                             </div>
 
-                            <!-- Ordinary Wage Check -->
-                            <div class="ordinary-wage-section">
-                                <h3>4. 통상임금 보장 (선택)</h3>
-                                <div class="input-group">
-                                    <label for="monthlyOrdinaryWage">
-                                        월 통상임금 (원)
-                                        <span class="tooltip-icon" title="평균임금이 통상임금보다 적을 경우, 통상임금을 기준으로 퇴직금이 계산됩니다. 입력 시 자동 비교됩니다.">?</span>
-                                    </label>
-                                    <input type="text" id="monthlyOrdinaryWage" placeholder="0" class="numeric-input">
-                                </div>
-                            </div>
-
                             <!-- Form Actions -->
                             <div class="form-actions">
                                 <button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
@@ -179,52 +140,41 @@
                         </form>
                     </div>
 
-                    <!-- Right: Results & Charts -->
+                    <!-- Right: Results -->
                     <div id="resultsColumn" class="results-column hidden">
                         <!-- Result Card -->
-                        <div class="card glass result-card highlight-border">
-                            <div class="card-header">
-                                <div class="badge badge-success">계산 완료</div>
-                                <h2>퇴직금 예상 수령액</h2>
-                            </div>
-                            <div class="result-display">
-                                <span class="currency-symbol">₩</span>
-                                <span id="finalSeverancePay" class="amount">0</span>
-                                <span class="won-label">원</span>
-                            </div>
-                            <div class="result-actions">
-                                <button id="printBtn" class="btn btn-outline btn-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                                    상세 내역 인쇄 / PDF 저장
+                        <div class="card glass result-card highlight-border" style="align-items: flex-start; text-align: left; gap: 16px;">
+                            <div class="badge badge-success">계산 완료</div>
+                            <div class="result-simple-header" style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">퇴직금 예상 수령액 (세전)</div>
+                            <div class="result-display-simple" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <span class="currency-symbol" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">₩</span>
+                                <span id="finalSeverancePay" class="amount-simple" style="font-size: 2.75rem; font-weight: 800; color: var(--primary); letter-spacing: -0.02em;">0</span>
+                                <span class="won-label-simple" style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">원</span>
+                                <button id="printBtn" class="btn-print-icon" title="PDF 저장 / 인쇄">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
                                 </button>
-                                <button id="sendToTaxBtn" class="btn btn-primary btn-sm">
+                            </div>
+                            <div class="result-simple-actions" style="width: 100%; margin-top: 8px;">
+                                <button id="sendToTaxBtn" class="btn btn-primary" style="width: 100%;">
                                     세금 계산하러 가기 &rarr;
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Wage Chart Card -->
-                        <div class="card glass">
-                            <div class="card-header">
-                                <h3>퇴직금 구성 비율</h3>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="wagesPieChart"></canvas>
-                            </div>
-                        </div>
-
                         <!-- Calculation Details Breakdown -->
-                        <div class="card glass">
-                            <div class="card-header">
-                                <h3>상세 산출 명세서</h3>
-                            </div>
+                        <details class="breakdown-details glass">
+                            <summary class="breakdown-summary">상세 산출 내역 보기</summary>
                             <div class="breakdown-list">
                                 <div class="breakdown-item">
                                     <span class="label">총 재직일수</span>
                                     <span class="value"><strong id="bdWorkingDays">0</strong>일</span>
                                 </div>
                                 <div class="breakdown-item">
-                                    <span class="label">3개월 임금 합계</span>
+                                    <span class="label">3개월 임금 합계 (월급 &times; 3)</span>
                                     <span class="value"><span id="bd3MonthWages">0</span>원</span>
                                 </div>
                                 <div class="breakdown-item">
@@ -239,18 +189,14 @@
                                     <span class="label">1일 평균임금</span>
                                     <span class="value highlight"><span id="bdDailyAverageWage">0</span>원</span>
                                 </div>
-                                <div id="ordinaryWageComparisonRow" class="breakdown-item hidden">
-                                    <span class="label">1일 통상임금 비교</span>
-                                    <span class="value"><span id="bdDailyOrdinaryWage">0</span>원 (적용기준: <span id="appliedWageType">평균임금</span>)</span>
-                                </div>
                             </div>
                             <div class="formula-box">
                                 <span class="formula-title">계산식</span>
                                 <code class="formula-code">
-                                    퇴직금 = <span class="f-daily-wage">1일 임금</span> &times; 30 &times; (<span class="f-working-days">재직일수</span> &divide; 365)
+                                    퇴직금 = 1일 평균임금 &times; 30 &times; (재직일수 &divide; 365)
                                 </code>
                             </div>
-                        </div>
+                        </details>
                     </div>
 
                     <!-- Placeholder Column when not calculated -->
