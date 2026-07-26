@@ -774,6 +774,38 @@ input:focus, select:focus {
     border-top: 1px solid var(--card-border);
     margin-top: auto;
 }
+.visitor-counter-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+}
+.visitor-counter {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid var(--card-border);
+    border-radius: 30px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: var(--transition);
+}
+.theme-dark .visitor-counter {
+    background: rgba(15, 23, 42, 0.35);
+}
+.visitor-counter:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px var(--primary-glow);
+}
+.visitor-counter img {
+    display: block;
+    height: 20px;
+    width: auto;
+    border: none !important;
+}
 
 /* Helper Utilities */
 .hidden {
