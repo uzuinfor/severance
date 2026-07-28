@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://uzuinfor.github.io/severance/sitemap.xml
