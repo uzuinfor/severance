@@ -479,4 +479,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load history on start
     loadHistoryList();
+
+    // Privacy Policy Modal Handler
+    const btnPrivacyPolicy = document.getElementById('btnPrivacyPolicy');
+    const privacyModalOverlay = document.getElementById('privacyModalOverlay');
+    const privacyModalCloseBtn = document.getElementById('privacyModalCloseBtn');
+
+    if (btnPrivacyPolicy && privacyModalOverlay) {
+        btnPrivacyPolicy.addEventListener('click', (e) => {
+            e.preventDefault();
+            privacyModalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    if (privacyModalCloseBtn && privacyModalOverlay) {
+        privacyModalCloseBtn.addEventListener('click', () => {
+            privacyModalOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+    }
+    if (privacyModalOverlay) {
+        privacyModalOverlay.addEventListener('click', (e) => {
+            if (e.target === privacyModalOverlay) {
+                privacyModalOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+    }
 });

@@ -457,13 +457,36 @@
         </aside>
 
         <footer class="app-footer">
-            <p>&copy; 2026 스마트 퇴직금 계산기. 대한민국 근로기준법 및 최신 세법 규정 반영.</p>
+            <p>&copy; 2026 스마트 퇴직금 계산기. 대한민국 근로기준법 및 최신 세법 규정 반영. | <a href="#" id="btnPrivacyPolicy" style="color: #6366f1; text-decoration: underline; cursor: pointer;">개인정보처리방침 (Privacy Policy)</a></p>
             <div class="visitor-counter-wrapper">
                 <div class="visitor-counter">
                     <img src="https://hits.sh/uzuinfor.github.io/severance.svg?label=Views&color=4f46e5&labelColor=1e293b" alt="Hits"/>
                 </div>
             </div>
         </footer>
+    </div>
+
+    <!-- Privacy Policy Modal (Google AdSense Compliant) -->
+    <div id="privacyModalOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(16px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 15px;">
+        <div style="width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; padding: 30px; position: relative; background: #0f172a; border-radius: 24px; border: 1px solid rgba(99, 102, 241, 0.4); color: #f8fafc;">
+            <button id="privacyModalCloseBtn" style="position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #94a3b8; font-size: 1.6rem; cursor: pointer;">&times;</button>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 18px; border-radius: 16px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h5 style="color: #818cf8; font-size: 1rem; font-weight: 800; margin-bottom: 8px;">🔒 개인정보처리방침 (Privacy Policy)</h5>
+                <p style="font-size: 0.95rem; line-height: 1.6;"><strong>스마트 퇴직금 계산기</strong>는 이용자의 개인정보를 중요시하며, '개인정보 보호법' 및 관련 법령을 준수합니다.</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 18px; border-radius: 16px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h5 style="color: #818cf8; font-size: 0.95rem; font-weight: 800; margin-bottom: 8px;">1. 수집하는 개인정보 항목 및 목적</h5>
+                <p style="font-size: 0.95rem; line-height: 1.6;">본 웹사이트는 별도의 회원가입 없이 이용할 수 있는 무료 웹 서비스로, 입력된 급여 및 입사일 정보는 사용자의 브라우저 내에서만 계산되며 서버에 저장되지 않습니다. 다만 서비스 이용 과정에서 쿠키(Cookie), 접속 IP, 방문 일시 등 비식별 데이터가 자동으로 생성되어 수집될 수 있습니다.</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 18px; border-radius: 16px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h5 style="color: #818cf8; font-size: 0.95rem; font-weight: 800; margin-bottom: 8px;">2. 쿠키(Cookie) 및 구글 애드센스(Google AdSense) 광고</h5>
+                <p style="font-size: 0.95rem; line-height: 1.6;">본 사이트는 구글(Google)을 포함한 제3자 광고 서비스 사업자(Google AdSense)의 맞춤형 광고를 게재할 수 있습니다. 구글은 쿠키를 사용하여 사용자의 본 사이트 및 다른 웹사이트 방문 기록을 바탕으로 광고를 제공합니다. 사용자는 <a href="https://adssettings.google.com" target="_blank" style="color: #818cf8;">구글 광고 설정</a>을 통해 맞춤형 광고 쿠키 사용을 거부할 수 있습니다.</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 18px; border-radius: 16px; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h5 style="color: #818cf8; font-size: 0.95rem; font-weight: 800; margin-bottom: 8px;">3. 개인정보 보호책임자 및 문의</h5>
+                <p style="font-size: 0.95rem; line-height: 1.6;">이메일 문의: <strong>uzuinfor@gmail.com</strong> | 본 방침 시행일: 2026년 7월 29일</p>
+            </div>
+        </div>
     </div>
 
     <!-- Main JavaScript Logic -->
