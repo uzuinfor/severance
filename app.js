@@ -480,37 +480,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load history on start
     loadHistoryList();
 
-    // Dynamic Visitor Counter Engine (Today & Total)
-    function initVisitorCounter(siteKey, baseToday, baseTotal) {
+    // Pure Real Visitor Counter Engine (Today & Total)
+    function initVisitorCounter(siteKey) {
         const todayElem = document.getElementById('visitorToday');
         const totalElem = document.getElementById('visitorTotal');
         if (!todayElem || !totalElem) return;
 
+        // Clear old mock storage if present
+        localStorage.removeItem(`${siteKey}_today_count`);
+        localStorage.removeItem(`${siteKey}_total_count`);
+
         const todayStr = new Date().toISOString().split('T')[0];
-        const savedDate = localStorage.getItem(`${siteKey}_visit_date`);
-        let todayCount = parseInt(localStorage.getItem(`${siteKey}_today_count`) || '0', 10);
-        let totalCount = parseInt(localStorage.getItem(`${siteKey}_total_count`) || '0', 10);
+        const savedDate = localStorage.getItem(`${siteKey}_real_visit_date`);
+        let todayCount = parseInt(localStorage.getItem(`${siteKey}_real_today_count`) || '0', 10);
+        let totalCount = parseInt(localStorage.getItem(`${siteKey}_real_total_count`) || '0', 10);
 
         if (savedDate !== todayStr) {
-            todayCount = baseToday + Math.floor(Math.random() * 12);
-            if (totalCount < baseTotal) totalCount = baseTotal;
-            localStorage.setItem(`${siteKey}_visit_date`, todayStr);
-        } else {
-            if (todayCount < baseToday) todayCount = baseToday;
-            if (totalCount < baseTotal) totalCount = baseTotal;
+            todayCount = 0;
+            localStorage.setItem(`${siteKey}_real_visit_date`, todayStr);
         }
 
         todayCount += 1;
         totalCount += 1;
 
-        localStorage.setItem(`${siteKey}_today_count`, todayCount.toString());
-        localStorage.setItem(`${siteKey}_total_count`, totalCount.toString());
+        localStorage.setItem(`${siteKey}_real_today_count`, todayCount.toString());
+        localStorage.setItem(`${siteKey}_real_total_count`, totalCount.toString());
 
         todayElem.textContent = todayCount.toLocaleString();
         totalElem.textContent = totalCount.toLocaleString();
     }
 
-    initVisitorCounter('severance', 3, 10);
+    initVisitorCounter('severance');
 
     // Privacy Policy Modal Handler
     const btnPrivacyPolicy = document.getElementById('btnPrivacyPolicy');
