@@ -486,9 +486,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalElem = document.getElementById('visitorTotal');
         if (!todayElem || !totalElem) return;
 
-        // Clear old mock storage if present
-        localStorage.removeItem(`${siteKey}_today_count`);
-        localStorage.removeItem(`${siteKey}_total_count`);
+        // Force purge old test numbers (>30) from browser storage
+        ['severance_today_count', 'severance_total_count', 'severance_visit_date', 'severance_real_today_count', 'severance_real_total_count'].forEach(k => {
+            const v = parseInt(localStorage.getItem(k) || '0', 10);
+            if (v > 30) localStorage.removeItem(k);
+        });
 
         const todayStr = new Date().toISOString().split('T')[0];
         const savedDate = localStorage.getItem(`${siteKey}_real_visit_date`);
