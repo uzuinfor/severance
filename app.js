@@ -480,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load history on start
     loadHistoryList();
 
-    // Universal Mobile-Compatible Real Global Counter Engine with Session Deduplication
+    // Universal Mobile-Compatible Real Global Counter Engine (Debounced Page Views)
     async function initRealGlobalVisitorCounter(namespace) {
         const todayElem = document.getElementById('visitorToday');
         const totalElem = document.getElementById('visitorTotal');
@@ -488,11 +488,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const todayStr = new Date().toISOString().split('T')[0];
         const todayKey = 'today_' + todayStr.replace(/-/g, '');
-        const sessionKey = `${namespace}_visited_${todayStr}`;
-        const isNewSession = !sessionStorage.getItem(sessionKey);
 
-        // 'up' for new visitor, 'get' for repeated F5 refreshes
-        const action = isNewSession ? 'up' : 'get';
+        // Debounce rapid accidental double-taps within 5 seconds, but count every real visit throughout the day!
+        const now = Date.now();
+        const lastVisit = parseInt(sessionStorage.getItem(`${namespace}_last_tap`) || '0', 10);
+        const isNewVisit = (now - lastVisit > 5000);
+        sessionStorage.setItem(`${namespace}_last_tap`, now.toString());
+
+        const action = isNewVisit ? 'up' : 'get';
 
         try {
             const controller = new AbortController();
@@ -516,10 +519,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 todayVal = data.count;
             }
 
-            if (isNewSession) {
-                sessionStorage.setItem(sessionKey, 'true');
-            }
-
             // Mobile Fallback
             let mToday = parseInt(localStorage.getItem(`${namespace}_mtoday`) || '1', 10);
             let mTotal = parseInt(localStorage.getItem(`${namespace}_mtotal`) || '1', 10);
@@ -528,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mDate !== todayStr) {
                 mToday = 1;
                 localStorage.setItem(`${namespace}_mdate`, todayStr);
-            } else if (isNewSession) {
+            } else if (isNewVisit) {
                 mToday += 1;
                 mTotal += 1;
             }
