@@ -527,11 +527,15 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(`${namespace}_mtoday`, mToday.toString());
             localStorage.setItem(`${namespace}_mtotal`, mTotal.toString());
 
-            todayElem.textContent = Number(todayVal || mToday).toLocaleString();
-            totalElem.textContent = Number(totalVal || mTotal).toLocaleString();
+            const baseTotalOffset = 50;
+            const finalTotal = (totalVal !== null ? totalVal + baseTotalOffset : mTotal + baseTotalOffset);
+            const finalToday = (todayVal !== null ? todayVal : mToday);
+
+            todayElem.textContent = Number(finalToday).toLocaleString();
+            totalElem.textContent = Number(finalTotal).toLocaleString();
         } catch (e) {
             todayElem.textContent = '1';
-            totalElem.textContent = '1';
+            totalElem.textContent = '51';
         }
     }
 
