@@ -480,21 +480,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load history on start
     loadHistoryList();
 
-    // Universal Mobile-Compatible Real Global Counter Engine
+    // Universal Mobile-Compatible Real Global Counter Engine with Session Deduplication
     async function initRealGlobalVisitorCounter(namespace) {
         const todayElem = document.getElementById('visitorToday');
         const totalElem = document.getElementById('visitorTotal');
         if (!todayElem || !totalElem) return;
 
-        const todayKey = 'today_' + new Date().toISOString().split('T')[0].replace(/-/g, '');
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayKey = 'today_' + todayStr.replace(/-/g, '');
+        const sessionKey = `${namespace}_visited_${todayStr}`;
+        const isNewSession = !sessionStorage.getItem(sessionKey);
+
+        // 'up' for new visitor, 'get' for repeated F5 refreshes
+        const action = isNewSession ? 'up' : 'get';
 
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3500);
 
             const [resTotal, resToday] = await Promise.all([
-                fetch(`https://api.counterapi.dev/v1/${namespace}/total/up`, { signal: controller.signal }).catch(() => null),
-                fetch(`https://api.counterapi.dev/v1/${namespace}/${todayKey}/up`, { signal: controller.signal }).catch(() => null)
+                fetch(`https://api.counterapi.dev/v1/${namespace}/total/${action}`, { signal: controller.signal }).catch(() => null),
+                fetch(`https://api.counterapi.dev/v1/${namespace}/${todayKey}/${action}`, { signal: controller.signal }).catch(() => null)
             ]);
             clearTimeout(timeoutId);
 
@@ -510,8 +516,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 todayVal = data.count;
             }
 
-            // Mobile CORS/AdBlock Fallback - Never display 0
-            const todayStr = new Date().toISOString().split('T')[0];
+            if (isNewSession) {
+                sessionStorage.setItem(sessionKey, 'true');
+            }
+
+            // Mobile Fallback
             let mToday = parseInt(localStorage.getItem(`${namespace}_mtoday`) || '1', 10);
             let mTotal = parseInt(localStorage.getItem(`${namespace}_mtotal`) || '1', 10);
             const mDate = localStorage.getItem(`${namespace}_mdate`);
@@ -519,11 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mDate !== todayStr) {
                 mToday = 1;
                 localStorage.setItem(`${namespace}_mdate`, todayStr);
-            } else {
+            } else if (isNewSession) {
                 mToday += 1;
+                mTotal += 1;
             }
-            mTotal += 1;
-
             localStorage.setItem(`${namespace}_mtoday`, mToday.toString());
             localStorage.setItem(`${namespace}_mtotal`, mTotal.toString());
 
